@@ -100,11 +100,11 @@ class Enrollment(models.Model):
 # One course can have many questions; each question has a grade (mark).
 class Question(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    content = models.CharField(max_length=200)
+    question_text = models.CharField(max_length=200)
     grade = models.IntegerField(default=50)
 
     def __str__(self):
-        return "Question: " + self.content
+        return "Question: " + self.question_text
 
     # Check whether the learner selected all the correct choices of this question
     def is_get_score(self, selected_ids):
@@ -121,11 +121,11 @@ class Question(models.Model):
 # One question can have many choices; each choice is either correct or not.
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    content = models.CharField(max_length=200)
+    choice_text = models.CharField(max_length=200)
     is_correct = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.content
+        return self.choice_text
 
 
 # Submission model
@@ -134,3 +134,7 @@ class Choice(models.Model):
 class Submission(models.Model):
     enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
     choices = models.ManyToManyField(Choice)
+
+    def __str__(self):
+        return "Submission " + str(self.id) + " by " + str(self.enrollment.user.username) + \
+               " for " + str(self.enrollment.course.name)
